@@ -3,7 +3,11 @@
 import { useDropzone } from 'react-dropzone'
 import { UploadIcon } from 'lucide-react'
 
-export function Upload() {
+interface UploadProps {
+  onUpload: (files: File[]) => void
+}
+
+export function Upload({ onUpload }: UploadProps) {
   const {
     getRootProps,
     getInputProps,
@@ -15,7 +19,7 @@ export function Upload() {
       'image/*': ['.png', '.jpg', '.jpeg'],
     },
     multiple: true,
-    onDrop: () => {},
+    onDropAccepted: onUpload,
     maxSize: 5_242_880, // 5 mb
   }) //
 
@@ -44,7 +48,7 @@ export function Upload() {
           )}
           {!isDragActive && (
             <span className="text-xs text-zinc-500">
-              Drop some files here...
+              Only images will be accepted here...
             </span>
           )}
         </div>
