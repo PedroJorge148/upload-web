@@ -19,26 +19,41 @@ export interface file {
   url: string | null
 }
 
+interface getUploadResponse {
+  uploads: {
+    id: string
+    name: string
+    key: string
+    sizeInBytes: number
+    fileUrl: string
+  }[]
+}
+
 export default function Home() {
   const [files, setFiles] = useState<file[]>([])
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     const response = await api.get<TODO>('/uploads')
+  useEffect(() => {
+    async function fetchData() {
+      const response = await api.get<getUploadResponse>('/uploads')
 
-  //     const uploadedFiles = response.data.map((file) => ({
-  //       id: file.id,
-  //       name: file.name,
-  //       readableSize: formatBytes(file.size),
-  //       preview: file.url,
-  //       uploaded: true,
-  //       url: file.fileUrl,
-  //     }))
+      const uploadedFiles: file[] = response.data.uploads.map((file) => ({
+        id: file.id,
+        name: file.name,
+        readableSize: formatBytes(file.sizeInBytes),
+        preview: file.fileUrl,
+        uploaded: true,
+        url: file.fileUrl,
+        error: false,
+        progress: 100,
+        file: new File([], file.name),
+      }))
 
-  //     setFiles(uploadedFiles)
-  //   }
-  //   fetchData()
-  // }, [])
+      console.log(uploadedFiles)
+
+      setFiles(uploadedFiles)
+    }
+    fetchData()
+  }, [])
 
   function updateFile(id: string, override: Partial<file> = {}) {
     setFiles((prevState) =>
